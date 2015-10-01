@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+	<head>
+		<base target="_blank">
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="author" content="Wangmk" />
+		<title>Linux命令之netstat</title>
+		<link rel="shortcut icon" href="/favicon.ico" />
+		<link href="/feed/" rel="alternate" title="Wangmk" type="application/atom+xml" />
+		<link rel="stylesheet" href="/media/css/style.css" />
+		<link rel="stylesheet" href="/media/css/highlight.css" />
+		<script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+	</head>
+	<body>
+		<div id="container">
+			<div id="main" role="main">
+				<header>
+				<h1>Linux命令之netstat</h1>
+				</header>
+				<nav>
+				<span><a title="网站首页" class="" href="/">首页</a></span>
+				<span><a title="文章分类" class="" href="/categories/">分类</a></span>
+				<span><a title="标签索引" class="" href="/tags/">标签</a></span>
+				<!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+				<span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+                                <span><a title="订阅本站" class="" href="/feed.xml">订阅</a></span>
+				<span><a title="关于站长" class="" href="/about/">关于</a></span>
+				</nav>
+				<article class="content">
+				<section class="meta">
+<span class="time">
+  <time datetime="2015-07-31">2015-07-31</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#linux" title="linux">linux</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#linux" title="linux">linux</a>&nbsp;
+  
+  <a href="/tags/#netstat" title="netstat">netstat</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<p>之前遇到过几次这个命令，今天总结一下，方便下次使用</p>
+
+<h2>1. 概述</h2>
+
+<p>netstat可以用来显示如下内容：</p>
+
+<ul>
+<li>网络连接</li>
+<li>路由表</li>
+<li>接口统计</li>
+<li>伪连接</li>
+<li>组播成员。</li>
+</ul>
+
+
+<h2>2. 常用参数</h2>
+
+<p>一般使用如下命令即可：</p>
+
+<p>netstat -anp</p>
+
+<ul>
+<li>-a(all):显示所有内容</li>
+<li>-t(tcp):仅显示tcp相关内容</li>
+<li>-u(udp):仅显示udp相关内容</li>
+<li>-n(numeric）:直接显示ip地址以及端口，不解析</li>
+<li>-l(listen):仅列出Listen（监听）的服务</li>
+<li>-p(pid):显示出socket所属的进程PID以及进程名字</li>
+<li>-r:显示路由信息，路由表</li>
+<li>-e:显示扩展信息，例如uid等</li>
+<li>-s:按各个协议进行统计</li>
+<li>-c:每隔一个固定时间，执行该netstat命令</li>
+</ul>
+
+
+<p>注：加参数'-n'会将应用程序转为端口显示，即数字格式的地址，如：nfs->2049,ftp->21,</p>
+
+<h2>3. ss命令和ip命令</h2>
+
+<p>看到这篇<a href="http://roclinux.cn/?p=2418">文章</a>说netstat官方以及不再更新了，已经被ss命令和ip命令所取代。建议使用ss和ip命令。但是自己man netstat并没有发现类似的说明，姑且认同吧。暂时没有打算仔细学习ss和ip命令，盗用作者的一张图吧。</p>
+
+<p><img src="../image/netstat_subsititute.jpg" alt="netstat&amp;&amp;ip&amp;&amp;ss" /></p>
+
+<h2>4. 其它</h2>
+
+<p>一般使用netstat查看端口后会有关闭该端口的需求，有一下两种方法。
+1) 通过iptables工具将端口关闭</p>
+
+<div class="highlight"><pre><code class="language-sh" data-lang="sh">sudo iptables -A INPUT -p tcp --dport <span class="nv">$PORT</span> -j DROP
+sudo iptables -A OUTPUT -p tcp --dport <span class="nv">$PORT</span> -j DROP</code></pre></div>
+
+
+<p>2) 关掉对应的应用程序</p>
+
+<div class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="nb">kill</span> -9 PID<span class="o">(</span>PID是进程号<span class="o">)</span></code></pre></div>
+
+
+<p>例如关闭22号端口：</p>
+
+<div class="highlight"><pre><code class="language-sh" data-lang="sh">netstat -anp <span class="p">|</span> grep :22
+//显示
+tcp <span class="m">0</span>  <span class="m">0</span> 0.0.0.0:22    0.0.0.0:*  LISTEN  988/sshd
+<span class="nb">kill</span> -9 998</code></pre></div>
+
+
+<p>注：一些端口通过netstat查不出来，可以使用如下方法：</p>
+
+<div class="highlight"><pre><code class="language-sh" data-lang="sh">sudo nmap -sT -O localhost</code></pre></div>
+
+
+<h2>5. 参考文献</h2>
+
+<ul>
+<li><a href="http://roclinux.cn/?p=2418">《和netstat说再见》-linux命令五分钟系列之三十</a></li>
+<li><a href="http://zyjustin9.iteye.com/blog/2017213">linux netstat 命令详——查看端口使用情况</a></li>
+<li><a href="http://www.cnblogs.com/azheng007/p/3159320.html">linux netstat 命令详解</a></li>
+<li><a href="http://www.cnblogs.com/peida/archive/2013/03/08/2949194.html">每天一个linux命令（56）：netstat命令</a></li>
+<li><a href="http://blog.csdn.net/wudiyi815/article/details/7473097">Linux查看端口使用状态、关闭端口方法</a></li>
+<li><a href="http://blog.csdn.net/zqj6893/article/details/18001689">Linux端口状态查看、启用和关闭</a></li>
+</ul>
+
+
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/http-status-code/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a  href="/replace-blank/" class="pageNav"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"blog-wangmingkuo"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+
+				</article>
+			</div>
+
+			<footer>
+			<p><small>
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2015 - 2015 <a href="/about/">Wangmk</a>
+			</small></p>
+			</footer>
+
+		</div>
+	</body>
+</html>
