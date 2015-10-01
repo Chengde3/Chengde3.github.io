@@ -1,10 +1,8 @@
 markdown: rdiscount
 permalink: /:title/
-url: http://blog.wangmingkuo.com
 highlighter: pygments
-name: Wangmk 
-description: Wangmk | 2015, To Be A Better one 
-author: Wangmk 
-duoshuo: 汪明阔 
+name: xy 
+description: xy | 2015, To Be A Better one 
+author: xy 
 safe: true
 paginate: 100
