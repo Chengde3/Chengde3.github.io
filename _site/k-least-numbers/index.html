@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+	<head>
+		<base target="_blank">
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="author" content="Wangmk" />
+		<title>最小的k个数</title>
+		<link rel="shortcut icon" href="/favicon.ico" />
+		<link href="/feed/" rel="alternate" title="Wangmk" type="application/atom+xml" />
+		<link rel="stylesheet" href="/media/css/style.css" />
+		<link rel="stylesheet" href="/media/css/highlight.css" />
+		<script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+	</head>
+	<body>
+		<div id="container">
+			<div id="main" role="main">
+				<header>
+				<h1>最小的k个数</h1>
+				</header>
+				<nav>
+				<span><a title="网站首页" class="" href="/">首页</a></span>
+				<span><a title="文章分类" class="" href="/categories/">分类</a></span>
+				<span><a title="标签索引" class="" href="/tags/">标签</a></span>
+				<!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+				<span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+                                <span><a title="订阅本站" class="" href="/feed.xml">订阅</a></span>
+				<span><a title="关于站长" class="" href="/about/">关于</a></span>
+				</nav>
+				<article class="content">
+				<section class="meta">
+<span class="time">
+  <time datetime="2015-08-29">2015-08-29</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#algorithm" title="algorithm">algorithm</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#algorithm" title="algorithm">algorithm</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<h2>1. 问题描述</h2>
+
+<p>输入n个整数，找出其中最小的k个数字。</p>
+
+<h2>2. 解题思路</h2>
+
+<p>思路一（需要修改数组，时间复杂度O(n)）：</p>
+
+<ul>
+<li>随机从数组中选择一个数字（或者选择第k个数字），然后调整数组，使得比这个数字大的数字都位于数组的左边，其余的位于右边；</li>
+<li>如果这个数字在调整后的数组中恰好位于第k位，则可以自己得出结果；</li>
+<li>如果不是，则分别在两边查找；</li>
+</ul>
+
+
+<p>思路二（特别适合处理海量数据，时间复杂度O(n*logk)）：</p>
+
+<ul>
+<li>使用一个数据容器来存储最小的k个数字；</li>
+<li>遍历数组，如果容器中数字的个数小于k，则将该元素插入到容器中；</li>
+<li>如果容器中数字的个数等于k，则比较该元素与容器中的最大元素，然后处理；</li>
+<li>使用最大堆或者红黑树；</li>
+</ul>
+
+
+<h2>3. 参考代码</h2>
+
+<p>思路一参考代码：</p>
+
+<div class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="kt">void</span> <span class="nf">Swap</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">tmp</span> <span class="o">=</span> <span class="o">*</span><span class="n">a</span><span class="p">;</span>
+    <span class="o">*</span><span class="n">a</span> <span class="o">=</span> <span class="o">*</span><span class="n">b</span><span class="p">;</span>
+    <span class="o">*</span><span class="n">b</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">Partition</span><span class="p">(</span><span class="kt">int</span> <span class="n">data</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">length</span><span class="p">,</span> <span class="kt">int</span> <span class="n">start</span><span class="p">,</span> <span class="kt">int</span> <span class="n">end</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">data</span> <span class="o">==</span> <span class="nb">NULL</span> <span class="o">||</span> <span class="n">length</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">end</span> <span class="o">&gt;=</span> <span class="n">length</span><span class="p">)</span> 
+        <span class="k">throw</span> <span class="k">new</span> <span class="n">std</span><span class="o">::</span><span class="n">exception</span><span class="p">(</span><span class="s">&quot;Invalid Parameters&quot;</span><span class="p">);</span>
+
+    <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">RandomInRange</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">);</span>
+    <span class="n">Swap</span><span class="p">(</span><span class="o">&amp;</span><span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="err">$</span><span class="n">data</span><span class="p">[</span><span class="n">end</span><span class="p">]);</span>
+
+    <span class="kt">int</span> <span class="n">small</span> <span class="o">=</span> <span class="n">start</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">index</span> <span class="o">=</span> <span class="n">start</span><span class="p">;</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="n">end</span><span class="p">;</span> <span class="n">index</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">data</span><span class="p">[</span><span class="n">end</span><span class="p">])</span> <span class="p">{</span>
+            <span class="n">small</span><span class="o">++</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">small</span> <span class="o">!=</span> <span class="n">index</span><span class="p">)</span>
+                <span class="n">Swap</span><span class="p">(</span><span class="o">&amp;</span><span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">data</span><span class="p">[</span><span class="n">small</span><span class="p">]);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="n">small</span><span class="o">++</span><span class="p">;</span>
+    <span class="n">Swap</span><span class="p">(</span><span class="o">&amp;</span><span class="n">data</span><span class="p">[</span><span class="n">small</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">data</span><span class="p">[</span><span class="n">end</span><span class="p">]);</span>
+
+    <span class="k">return</span> <span class="n">small</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">GetLeastNumbers</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span> <span class="n">input</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span> <span class="n">output</span><span class="p">,</span> <span class="kt">int</span> <span class="n">k</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">input</span> <span class="o">==</span> <span class="nb">NULL</span> <span class="o">||</span> <span class="n">output</span> <span class="o">==</span> <span class="nb">NULL</span> <span class="o">||</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="n">n</span> <span class="o">||</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">k</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+
+    <span class="kt">int</span> <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">end</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">Partition</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">);</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">index</span> <span class="o">!=</span> <span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">index</span> <span class="o">&gt;</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">index</span><span class="p">;</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">Partition</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">index</span><span class="p">;</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">Partition</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span> <span class="n">k</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">output</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="p">}</span></code></pre></div>
+
+
+<p>思路二参考代码：</p>
+
+<div class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="k">typedef</span> <span class="n">multiset</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="n">intSet</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="n">multiset</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&gt;::</span><span class="n">iterator</span> <span class="n">setInterator</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">GetLeastNumbers</span><span class="p">(</span><span class="k">const</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">data</span><span class="p">,</span> <span class="n">intSet</span><span class="o">&amp;</span> <span class="n">leastNumbers</span><span class="p">,</span> <span class="kt">int</span> <span class="n">k</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">leastNumbers</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="n">k</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">||</span> <span class="n">data</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">k</span><span class="p">)</span> 
+        <span class="k">return</span><span class="p">;</span>
+
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;::</span><span class="n">const_iterator</span> <span class="n">iter</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span>
+    <span class="k">for</span><span class="p">(;</span> <span class="n">iter</span> <span class="o">!=</span> <span class="n">data</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="n">iter</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">((</span><span class="n">leastNumbers</span><span class="p">.</span><span class="n">size</span><span class="p">())</span> <span class="o">&lt;</span> <span class="n">k</span><span class="p">)</span>
+            <span class="n">leastNumbers</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="o">*</span><span class="n">iter</span><span class="p">);</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="n">setInterator</span> <span class="n">iterGreatest</span> <span class="o">=</span> <span class="n">leastNumbers</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span>
+
+            <span class="k">if</span><span class="p">(</span><span class="o">*</span><span class="n">iter</span> <span class="o">&lt;</span> <span class="o">*</span><span class="p">(</span><span class="n">leastNumbers</span><span class="p">.</span><span class="n">begin</span><span class="p">()))</span> <span class="p">{</span>
+                <span class="n">leastNumbers</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">iterGreatest</span><span class="p">);</span>
+                <span class="n">leastNumbers</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="o">*</span><span class="n">iter</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+
+
+<h2>4. 思考</h2>
+
+<ul>
+<li>对于Partition函数仍然无法掌握，需要加强理解以及实践；</li>
+<li>红黑树以及二叉搜索树没有掌握；</li>
+<li>本题可以扩展为查找n个数中第k大的数字；</li>
+</ul>
+
+
+<h2>5. 参考</h2>
+
+<ul>
+<li><a href="http://www.broadview.com.cn/#book/bookdetail/bookDetailAll.jsp?book_id=12c9bc27-a944-11e4-9c0a-005056c00008&amp;isbn=978-7-121-23245-9">《剑指offer》</a></li>
+</ul>
+
+
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/greatest-sum-of-sub-arrays/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a  href="/number-of-1/" class="pageNav"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"blog-wangmingkuo"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+
+				</article>
+			</div>
+
+			<footer>
+			<p><small>
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2015 - 2015 <a href="/about/">Wangmk</a>
+			</small></p>
+			</footer>
+
+		</div>
+	</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+	<head>
+		<base target="_blank">
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="author" content="Wangmk" />
+		<title>n个色子的点数</title>
+		<link rel="shortcut icon" href="/favicon.ico" />
+		<link href="/feed/" rel="alternate" title="Wangmk" type="application/atom+xml" />
+		<link rel="stylesheet" href="/media/css/style.css" />
+		<link rel="stylesheet" href="/media/css/highlight.css" />
+		<script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+	</head>
+	<body>
+		<div id="container">
+			<div id="main" role="main">
+				<header>
+				<h1>n个色子的点数</h1>
+				</header>
+				<nav>
+				<span><a title="网站首页" class="" href="/">首页</a></span>
+				<span><a title="文章分类" class="" href="/categories/">分类</a></span>
+				<span><a title="标签索引" class="" href="/tags/">标签</a></span>
+				<!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+				<span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+                                <span><a title="订阅本站" class="" href="/feed.xml">订阅</a></span>
+				<span><a title="关于站长" class="" href="/about/">关于</a></span>
+				</nav>
+				<article class="content">
+				<section class="meta">
+<span class="time">
+  <time datetime="2015-09-01">2015-09-01</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#algorithm" title="algorithm">algorithm</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#algorithm" title="algorithm">algorithm</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<h2>1. 问题描述</h2>
+
+<p>把n个色子扔在地上，所有色子朝上一面的点数之和为s。输入n，打印出s的所有可能的值出现的概率；</p>
+
+<h2>2. 解题思路</h2>
+
+<p>思路一：递归</p>
+
+<ul>
+<li>把n个色子分为两堆，第一堆只有一个，第二堆有n-1个；计算单独那一个1-6的点数与n-1个色子的点数之和；</li>
+<li>对n-1个那一堆也做这样处理；</li>
+</ul>
+
+
+<p>思路二：循环</p>
+
+<p>递归需要有大量重复的计算，会影响性能；</p>
+
+<ul>
+<li>设置两个数组来存储色子点数的每一个总数出现的次数。</li>
+<li>一次循环中，第一个数组中的第n个数字表示色子和为n出现的次数；</li>
+<li>下一次循环中，加上一个新的色子，此时和为n的色子出现的次数等于上一次循环中色子点数和为n-1,n-2,n-3,n-4,n-5,n-6的次数的中和；</li>
+<li>交换两个数组，继续循环；</li>
+</ul>
+
+
+<h2>3. 参考代码</h2>
+
+<p>//递归参考代码</p>
+
+<div class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="kt">int</span> <span class="n">g_maxValue</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">Probability</span><span class="p">(</span><span class="kt">int</span> <span class="n">number</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span> <span class="n">pProbabilities</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">Probability</span><span class="p">(</span><span class="kt">int</span> <span class="n">original</span><span class="p">,</span> <span class="kt">int</span> <span class="n">current</span><span class="p">,</span> <span class="kt">int</span> <span class="n">sum</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="n">pProbabilities</span><span class="p">);</span>
+
+<span class="kt">void</span> <span class="nf">PrintProbability</span><span class="p">(</span><span class="kt">int</span> <span class="n">number</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">number</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+
+    <span class="kt">int</span> <span class="n">maxSum</span> <span class="o">=</span> <span class="n">number</span> <span class="o">*</span> <span class="n">g_maxValue</span><span class="p">;</span>
+    <span class="kt">int</span><span class="o">*</span> <span class="n">pProbabilities</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="n">maxSum</span> <span class="o">-</span> <span class="n">number</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">number</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">maxSum</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> 
+        <span class="n">pProbabilities</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="n">number</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="n">Probability</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="n">pProbabilities</span><span class="p">);</span>
+
+    <span class="kt">int</span> <span class="n">total</span> <span class="o">=</span> <span class="n">pow</span><span class="p">((</span><span class="kt">double</span><span class="p">)</span><span class="n">g_maxValue</span><span class="p">,</span> <span class="n">number</span><span class="p">);</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">number</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">maxSum</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">double</span> <span class="n">ratio</span> <span class="o">=</span> <span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="n">pProbabilities</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="n">number</span><span class="p">]</span> <span class="o">/</span> <span class="n">total</span><span class="p">;</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d: %e</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">ratio</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">delete</span><span class="p">[]</span> <span class="n">pProbabilities</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">Probability</span><span class="p">(</span><span class="kt">int</span> <span class="n">number</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span> <span class="n">pProbabilities</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">g_maxValue</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> 
+        <span class="n">Probability</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="n">number</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">pProbabilities</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">Probability</span><span class="p">(</span><span class="kt">int</span> <span class="n">original</span><span class="p">,</span> <span class="kt">int</span> <span class="n">current</span><span class="p">,</span> <span class="kt">int</span> <span class="n">sum</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span> <span class="n">pProbabilities</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">current</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">pProbabilities</span><span class="p">[</span><span class="n">sum</span><span class="o">-</span><span class="n">original</span><span class="p">]</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">g_maxValue</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">Probability</span><span class="p">(</span><span class="n">original</span><span class="p">,</span> <span class="n">current</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="n">sum</span><span class="p">,</span> <span class="n">pProbabilities</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+
+
+<p>//循环参考代码</p>
+
+<div class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="kt">int</span> <span class="n">g_maxValue</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">PrintProbability</span><span class="p">(</span><span class="kt">int</span> <span class="n">number</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">number</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> 
+        <span class="k">return</span><span class="p">;</span>
+
+    <span class="c1">//初始化</span>
+    <span class="kt">int</span><span class="o">*</span> <span class="n">pProbabilities</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+    <span class="n">pProbabilities</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="n">g_maxValue</span> <span class="o">*</span> <span class="n">number</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
+    <span class="n">pProbabilities</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="n">g_maxValue</span> <span class="o">*</span> <span class="n">number</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">g_maxValue</span> <span class="o">*</span> <span class="n">number</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">pProbabilities</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="n">pProbabilities</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+    
+    <span class="c1">//第一个色子</span>
+    <span class="kt">int</span> <span class="n">flag</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">g_maxValue</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> 
+        <span class="n">pProbabilities</span><span class="p">[</span><span class="n">flag</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;=</span> <span class="n">number</span><span class="p">;</span> <span class="n">k</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//k个色子最小也为k</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">k</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">pProbabilities</span><span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="n">flag</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">k</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">g_maxValue</span> <span class="o">*</span> <span class="n">k</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">pProbabilities</span><span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="n">flag</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="c1">//j &lt;= i保证i-j &gt;= 0;</span>
+            <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">i</span> <span class="o">&amp;&amp;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">g_maxValue</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> 
+                <span class="n">pProbabilities</span><span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="n">flag</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">pProbabilities</span><span class="p">[</span><span class="n">flag</span><span class="p">][</span><span class="n">i</span><span class="o">-</span><span class="n">j</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">flag</span><span class="p">;</span>
+    <span class="p">}</span>
+    
+    <span class="kt">double</span> <span class="n">total</span> <span class="o">=</span> <span class="n">pow</span><span class="p">((</span><span class="kt">double</span><span class="p">)</span><span class="n">g_maxValue</span><span class="p">,</span> <span class="n">number</span><span class="p">);</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">number</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">g_maxValue</span> <span class="o">*</span> <span class="n">number</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">double</span> <span class="n">ratio</span> <span class="o">=</span> <span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="n">pProbabilities</span><span class="p">[</span><span class="n">flag</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">total</span><span class="p">;</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d: %e</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">ratio</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">delete</span><span class="p">[]</span> <span class="n">pProbabilities</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="k">delete</span><span class="p">[]</span> <span class="n">pProbabilities</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="p">}</span></code></pre></div>
+
+
+<h2>4. 思考</h2>
+
+<p>递归啊递归！！！</p>
+
+<h2>5. 参考</h2>
+
+<ul>
+<li><a href="http://www.broadview.com.cn/#book/bookdetail/bookDetailAll.jsp?book_id=12c9bc27-a944-11e4-9c0a-005056c00008&amp;isbn=978-7-121-23245-9">《剑指offer》</a></li>
+</ul>
+
+
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/continuous-cards/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a  href="/duplication-in-array/" class="pageNav"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"blog-wangmingkuo"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+
+				</article>
+			</div>
+
+			<footer>
+			<p><small>
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2015 - 2015 <a href="/about/">Wangmk</a>
+			</small></p>
+			</footer>
+
+		</div>
+	</body>
+</html>

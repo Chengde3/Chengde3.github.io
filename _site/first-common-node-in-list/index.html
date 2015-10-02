@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+	<head>
+		<base target="_blank">
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="author" content="Wangmk" />
+		<title>两个链表的第一个公共结点</title>
+		<link rel="shortcut icon" href="/favicon.ico" />
+		<link href="/feed/" rel="alternate" title="Wangmk" type="application/atom+xml" />
+		<link rel="stylesheet" href="/media/css/style.css" />
+		<link rel="stylesheet" href="/media/css/highlight.css" />
+		<script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+	</head>
+	<body>
+		<div id="container">
+			<div id="main" role="main">
+				<header>
+				<h1>两个链表的第一个公共结点</h1>
+				</header>
+				<nav>
+				<span><a title="网站首页" class="" href="/">首页</a></span>
+				<span><a title="文章分类" class="" href="/categories/">分类</a></span>
+				<span><a title="标签索引" class="" href="/tags/">标签</a></span>
+				<!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+				<span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+                                <span><a title="订阅本站" class="" href="/feed.xml">订阅</a></span>
+				<span><a title="关于站长" class="" href="/about/">关于</a></span>
+				</nav>
+				<article class="content">
+				<section class="meta">
+<span class="time">
+  <time datetime="2015-08-10">2015-08-10</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#algorithm" title="algorithm">algorithm</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#algorithm" title="algorithm">algorithm</a>&nbsp;
+  
+  <a href="/tags/#list" title="list">list</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<h2>1. 问题定义</h2>
+
+<p>输入两个链表，找出他们的第一个公共结点。</p>
+
+<h2>2. 解题思路</h2>
+
+<p>思路一：</p>
+
+<ul>
+<li>暴力法：依次遍历两个链表并比较；时间复杂度为O(mn)；</li>
+</ul>
+
+
+<p>思路二：</p>
+
+<ul>
+<li>把两个链表的结点压入两个栈中，然后比较两个栈栈顶元素是否相同，直到找到最后一个相同的结点，时间复杂度为O(m+n)，需要两个辅助栈；</li>
+</ul>
+
+
+<p>思路三：</p>
+
+<ul>
+<li>遍历两个链表得到长度n1,n2（假设n1 > n2）；</li>
+<li>长链表走(n1-n2)步；</li>
+<li>再同时遍历两个链表，找到第一个相同的结点；</li>
+</ul>
+
+
+<h2>3. 参考代码</h2>
+
+<div class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="k">struct</span> <span class="n">ListNode</span><span class="p">{</span>
+    <span class="kt">int</span> <span class="n">m_nKey</span><span class="p">;</span>
+    <span class="n">ListNode</span><span class="o">*</span> <span class="n">m_pNext</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">GetListLength</span><span class="p">(</span><span class="n">ListNode</span><span class="o">*</span> <span class="n">pHead</span><span class="p">);</span>
+
+<span class="n">ListNode</span><span class="o">*</span> <span class="nf">FindFirstCommonNode</span><span class="p">(</span><span class="n">ListNode</span><span class="o">*</span> <span class="n">pHead1</span><span class="p">,</span> <span class="n">ListNode</span><span class="o">*</span> <span class="n">pHead2</span><span class="p">){</span>
+
+    <span class="c1">//得到两个链表的长度;</span>
+    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">nLength1</span> <span class="o">=</span> <span class="n">GetListLength</span><span class="p">(</span><span class="n">pHead1</span><span class="p">);</span>
+    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">nLength2</span> <span class="o">=</span> <span class="n">GetListLength</span><span class="p">(</span><span class="n">pHead2</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="n">nLengthDif</span> <span class="o">=</span> <span class="n">nLength1</span> <span class="o">-</span> <span class="n">nLength2</span><span class="p">;</span>
+
+    <span class="n">ListNode</span><span class="o">*</span> <span class="n">pListHeadLong</span> <span class="o">=</span> <span class="n">pHead1</span><span class="p">;</span>
+    <span class="n">ListNode</span><span class="o">*</span> <span class="n">pListHeadShort</span> <span class="o">=</span> <span class="n">pHead2</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">nLength2</span> <span class="o">&gt;</span> <span class="n">nLength1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">pListHeadLong</span> <span class="o">=</span> <span class="n">pHead2</span><span class="p">;</span>
+        <span class="n">pListHeadShort</span> <span class="o">=</span> <span class="n">pHead1</span><span class="p">;</span>
+        <span class="n">nLengthDif</span> <span class="o">=</span> <span class="n">nLength2</span> <span class="o">-</span> <span class="n">nLength1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">//先在长链表上走几步</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">nLengthDif</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> 
+        <span class="n">pListHeadLong</span> <span class="o">=</span> <span class="n">pListHeadLong</span><span class="o">-&gt;</span><span class="n">m_pNext</span><span class="p">;</span>
+
+    <span class="c1">//同时在两个链表上面遍历</span>
+    <span class="k">while</span><span class="p">((</span><span class="n">pListHeadLong</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">pListHeadShort</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">pListHeadShort</span> <span class="o">!=</span> <span class="n">pListHeadLong</span><span class="p">))</span> <span class="p">{</span>
+        <span class="n">pListHeadLong</span> <span class="o">=</span> <span class="n">pListHeadLong</span><span class="o">-&gt;</span><span class="n">m_pNext</span><span class="p">;</span>
+        <span class="n">pListHeadShort</span> <span class="o">=</span> <span class="n">pListHeadShort</span><span class="o">-&gt;</span><span class="n">m_pNext</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">//得到第一个公共结点</span>
+    <span class="n">ListNode</span><span class="o">*</span> <span class="n">pFirstCommonNode</span> <span class="o">=</span> <span class="n">pListHeadLong</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">pFirstCommonNode</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">unsigned</span> <span class="kt">int</span> <span class="nf">GetListLength</span><span class="p">(</span><span class="n">ListNode</span><span class="o">*</span> <span class="n">pHead</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">ListNode</span><span class="o">*</span> <span class="n">pNode</span> <span class="o">=</span> <span class="n">pHead</span><span class="p">;</span>
+    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">nLength</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">pNode</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+        <span class="o">++</span><span class="n">nLength</span><span class="p">;</span>
+        <span class="n">pNode</span> <span class="o">=</span> <span class="n">pNode</span><span class="o">-&gt;</span><span class="n">m_pNext</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">nLength</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+
+
+<h2>4. 思考</h2>
+
+<ul>
+<li>画图以辅助理解；</li>
+<li>输入两个链表，如何确定长短链表？可以重新定义两个指针，比较两个链表的长度，将长链表头结点复制给其中一个指针即可；这样就可以区分两个长短链表了；</li>
+</ul>
+
+
+<h2>5. 参考文献</h2>
+
+<ul>
+<li><a href="http://www.broadview.com.cn/#book/bookdetail/bookDetailAll.jsp?book_id=12c9bc27-a944-11e4-9c0a-005056c00008&amp;isbn=978-7-121-23245-9">《剑指offer》</a></li>
+</ul>
+
+
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/min-number-in-rotate-array/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a  href="/memory-assign-methods/" class="pageNav"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"blog-wangmingkuo"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+
+				</article>
+			</div>
+
+			<footer>
+			<p><small>
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2015 - 2015 <a href="/about/">Wangmk</a>
+			</small></p>
+			</footer>
+
+		</div>
+	</body>
+</html>

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+	<head>
+		<base target="_blank">
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="author" content="Wangmk" />
+		<title>从1到n整数中1出现的次数</title>
+		<link rel="shortcut icon" href="/favicon.ico" />
+		<link href="/feed/" rel="alternate" title="Wangmk" type="application/atom+xml" />
+		<link rel="stylesheet" href="/media/css/style.css" />
+		<link rel="stylesheet" href="/media/css/highlight.css" />
+		<script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+	</head>
+	<body>
+		<div id="container">
+			<div id="main" role="main">
+				<header>
+				<h1>从1到n整数中1出现的次数</h1>
+				</header>
+				<nav>
+				<span><a title="网站首页" class="" href="/">首页</a></span>
+				<span><a title="文章分类" class="" href="/categories/">分类</a></span>
+				<span><a title="标签索引" class="" href="/tags/">标签</a></span>
+				<!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+				<span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+                                <span><a title="订阅本站" class="" href="/feed.xml">订阅</a></span>
+				<span><a title="关于站长" class="" href="/about/">关于</a></span>
+				</nav>
+				<article class="content">
+				<section class="meta">
+<span class="time">
+  <time datetime="2015-08-30">2015-08-30</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#algorithm" title="algorithm">algorithm</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#algorithm" title="algorithm">algorithm</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<h2>1. 问题描述</h2>
+
+<p>输入一个整数n，求从1到n这n个整数中十进制表示中1出现的次数。</p>
+
+<h2>2. 解题思路</h2>
+
+<p>思路一：</p>
+
+<ul>
+<li>每次通过对10求余数判断整数的个位数字是不是1；</li>
+<li>输入数字n，n有O(logn)位，故时间复杂度为O(n*logn)；</li>
+</ul>
+
+
+<p>思路二：</p>
+
+<p>有如下规律：</p>
+
+<ul>
+<li>0-9，之间1的个数为1；</li>
+<li>00-99，从两个位置中选一个位置置为1，其余每一位有10种选择，故有：2*10 = 20;(只考虑十位是否有1，共有10种，仅考虑个位是否有1，共有10种)</li>
+<li>000-999，从三个位置中选一个位置置为1，其余每一位有10种选择，故有：3*10*10 = 300;</li>
+<li>0000-9999，从三个位置中选一个位置置为1，其余每一位有10种选择，故有：4<em>10</em>10*10 = 4000;</li>
+<li>因此可以将n一次划分即可；</li>
+<li>例如21345可以如下计算，(10000 + 2*4*1000) + (345+1 + 1*300) + (100 + 3*20) + (10 + 4*1) + (1 + 0);</li>
+<li>(10<sup>4</sup> + 2*4*10<sup>4-1</sup>) + (345+1 + 1*300) + (10<sup>2</sup> + 3*2*10<sup>2-1</sup>) + (10<sup>1</sup> + 4*1*10<sup>1-1</sup>) + (1 + 0)</li>
+</ul>
+
+
+<p>思路三：</p>
+
+<p>有如下规律：</p>
+
+<ul>
+<li>0-9，之间1的个数为1；</li>
+<li>00-99，个位数有10个0-9，故有10*1=10次，而十位为1的有10次，故有10*1 + 10 = 20；</li>
+<li>000-999，十位个位共有10个00-99，故有10*20=200次，而百位为1的有100次，故有200+100=300次；</li>
+<li>0000-9999，百位十位个位共有10个000-999，故有10*300=3000次，而千位为1的有1000次，共有3000+1000=4000次；</li>
+</ul>
+
+
+<h2>3. 参考代码</h2>
+
+<p>//思路一参考代码</p>
+
+<div class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="kt">int</span> <span class="nf">NumberOf1</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">n</span><span class="p">);</span>
+<span class="kt">int</span> <span class="nf">NumberOf1Between1AndN</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">number</span> <span class="o">+=</span> <span class="n">NumberOf1</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">number</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">NumberOf1</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">n</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">number</span><span class="o">++</span><span class="p">;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">n</span> <span class="o">/</span> <span class="mi">10</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">number</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+
+
+<p>//思路二参考代码</p>
+
+<div class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="cp">#include&lt;stdio.h&gt;</span>
+
+<span class="kt">long</span> <span class="kt">long</span> <span class="nf">PowerBase10</span><span class="p">(</span><span class="kt">long</span> <span class="kt">long</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">long</span> <span class="kt">long</span> <span class="n">result</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">*=</span> <span class="mi">10</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">long</span> <span class="kt">long</span> <span class="nf">NumberOf1</span><span class="p">(</span><span class="kt">long</span> <span class="kt">long</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="kt">long</span> <span class="kt">long</span> <span class="n">tmp</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span>
+    <span class="kt">long</span> <span class="kt">long</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kt">long</span> <span class="kt">long</span> <span class="n">weight</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="kt">long</span> <span class="kt">long</span> <span class="n">digit</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="kt">int</span> <span class="n">x</span><span class="p">;</span>        <span class="c1">//数的当前位</span>
+    <span class="c1">//数的当前基数，从零开始计；</span>
+    <span class="kt">int</span> <span class="n">curDigit</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">while</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">tmp</span> <span class="o">%</span> <span class="mi">10</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">curDigit</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">weight</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="n">weight</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">curDigit</span> <span class="o">*</span> <span class="n">PowerBase10</span><span class="p">(</span><span class="n">curDigit</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>  
+            <span class="n">digit</span> <span class="o">=</span> <span class="n">n</span> <span class="o">%</span> <span class="n">PowerBase10</span><span class="p">(</span><span class="n">curDigit</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="n">digit</span> <span class="o">=</span> <span class="n">PowerBase10</span><span class="p">(</span><span class="n">curDigit</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="n">count</span> <span class="o">+=</span> <span class="p">(</span><span class="n">digit</span> <span class="o">+</span> <span class="n">weight</span><span class="p">);</span>
+
+        <span class="n">curDigit</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="n">tmp</span> <span class="o">/=</span> <span class="mi">10</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">count</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kt">long</span> <span class="kt">long</span> <span class="n">input</span> <span class="o">=</span> <span class="mi">21345</span><span class="p">;</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%lld</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">NumberOf1</span><span class="p">(</span><span class="n">input</span><span class="p">));</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+
+
+<p>//剑指offer上面的代码；</p>
+
+<div class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="kt">int</span> <span class="nf">NumberOf1</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">strN</span><span class="p">);</span>
+<span class="kt">int</span> <span class="nf">PowerBase10</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">n</span><span class="p">);</span>
+<span class="kt">int</span> <span class="nf">NumberOf1Between1AndN</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">strN</span><span class="p">[</span><span class="mi">50</span><span class="p">];</span>
+    <span class="c1">//将格式化的数据写入字符串</span>
+    <span class="n">sprintf</span><span class="p">(</span><span class="n">strN</span><span class="p">,</span> <span class="s">&quot;%d&quot;</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="n">NumberOf1</span><span class="p">(</span><span class="n">strN</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">NumberOf1</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">strN</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">strN</span> <span class="o">||</span> <span class="o">*</span><span class="n">strN</span> <span class="o">&lt;</span> <span class="sc">&#39;0&#39;</span> <span class="o">||</span> <span class="o">*</span><span class="n">strN</span> <span class="o">&gt;</span> <span class="sc">&#39;9&#39;</span> <span class="o">||</span> <span class="o">*</span><span class="n">strN</span> <span class="o">==</span> <span class="sc">&#39;\0&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="c1">//字符转整数</span>
+    <span class="kt">int</span> <span class="n">first</span> <span class="o">=</span> <span class="o">*</span><span class="n">strN</span> <span class="o">-</span> <span class="sc">&#39;0&#39;</span><span class="p">;</span>
+    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">length</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">strlen</span><span class="p">(</span><span class="n">strN</span><span class="p">));</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="n">length</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">first</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">length</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">first</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">//假设strN是21345，numFirstDigit是数字10000-19999的第一位中的数目</span>
+    <span class="kt">int</span> <span class="n">numFirstDigit</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">first</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> 
+        <span class="n">numFirstDigit</span> <span class="o">=</span> <span class="n">PowerBase10</span><span class="p">(</span><span class="n">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">first</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> 
+        <span class="n">numFirstDigit</span> <span class="o">=</span> <span class="n">atoi</span><span class="p">(</span><span class="n">strN</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">//numOtherDigits是1346-21345除了第一位之外的数位中的数目</span>
+    <span class="kt">int</span> <span class="n">numOtherDigits</span> <span class="o">=</span> <span class="n">first</span> <span class="o">*</span> <span class="p">(</span><span class="n">length</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">PowerBase10</span><span class="p">(</span><span class="n">length</span><span class="o">-</span><span class="mi">2</span><span class="p">);</span>
+    <span class="c1">//numRecursive是1-1345中的数目</span>
+    <span class="kt">int</span> <span class="n">numRecursive</span> <span class="o">=</span> <span class="n">NumberOf1</span><span class="p">(</span><span class="n">strN</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="n">numFirstDigit</span> <span class="o">+</span> <span class="n">numOtherDigits</span> <span class="o">+</span> <span class="n">numRecursive</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">PowerBase10</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">result</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">result</span> <span class="o">*=</span> <span class="mi">10</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+
+
+<p>//思路三代码</p>
+
+<div class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="kt">long</span> <span class="kt">long</span> <span class="nf">NumberOf1</span><span class="p">(</span><span class="kt">long</span> <span class="kt">long</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">long</span> <span class="kt">long</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="c1">//0            :0</span>
+    <span class="c1">//0~9      :1      = 10*0 + 1;</span>
+    <span class="c1">//00-99        :20     = 10*1 + 10</span>
+    <span class="c1">//000-999  :300    = 10*20 + 100;</span>
+    <span class="c1">//0000-9999    :4000   = 10*300 + 1000</span>
+    <span class="kt">long</span> <span class="kt">long</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>           <span class="c1">//0,1,20,300,4000</span>
+    <span class="kt">long</span> <span class="kt">long</span> <span class="n">weight</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>      <span class="c1">//1,10,100,1000</span>
+    <span class="c1">//数的当前位</span>
+    <span class="kt">int</span> <span class="n">x</span><span class="p">;</span>
+
+    <span class="kt">long</span> <span class="kt">long</span> <span class="n">temp</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">temp</span> <span class="o">%</span> <span class="mi">10</span><span class="p">;</span>
+
+        <span class="n">count</span> <span class="o">+=</span> <span class="n">x</span><span class="o">*</span><span class="n">a</span><span class="p">;</span>
+
+        <span class="c1">//加上当前位1的个数</span>
+        <span class="c1">//若该位&gt;1，则当前位为1的个数为10^(m-1)</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> 
+            <span class="n">count</span> <span class="o">+=</span> <span class="n">weight</span><span class="p">;</span>
+        <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">//若该位=1，则当前位为1的个数应该为该数右边的数字组成的数+1</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="n">n</span> <span class="o">%</span> <span class="n">weight</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="n">a</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">a</span> <span class="o">+</span> <span class="n">weight</span><span class="p">;</span>   <span class="c1">//an = 10 * a(n-1) + 10 ^ (m-1), m为位数</span>
+        <span class="n">weight</span> <span class="o">*=</span> <span class="mi">10</span><span class="p">;</span>
+
+        <span class="n">temp</span> <span class="o">/=</span> <span class="mi">10</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">count</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+
+
+<h2>4. 思考</h2>
+
+<ul>
+<li>剑指offer上面给的解释有误；</li>
+<li>通过例子找出一般规律，此方面有待加强，希望多动手；</li>
+</ul>
+
+
+<h2>5. 参考</h2>
+
+<ul>
+<li><a href="http://zhedahht.blog.163.com/blog/static/25411174200732494452636/">程序员面试题精选100题(25)-在从1到n的正数中1出现的次数[算法]</a>(剑指offer的博客)</li>
+<li><a href="http://blog.csdn.net/livelylittlefish/article/details/2768348">google面试题及我的算法（2）——0~n之间1的个数（完美版）</a>(思路三参考博客)</li>
+<li><a href="http://www.cnblogs.com/jy02414216/archive/2011/03/09/1977724.html">编程之美系列之三——计算1的个数</a></li>
+<li><a href="http://www.broadview.com.cn/#book/bookdetail/bookDetailAll.jsp?book_id=12c9bc27-a944-11e4-9c0a-005056c00008&amp;isbn=978-7-121-23245-9">《剑指offer》</a></li>
+</ul>
+
+
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/k-least-numbers/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a  href="/ugly-number/" class="pageNav"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"blog-wangmingkuo"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+
+				</article>
+			</div>
+
+			<footer>
+			<p><small>
+				<a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank" title="许可协议">©</a> 2015 - 2015 <a href="/about/">Wangmk</a>
+			</small></p>
+			</footer>
+
+		</div>
+	</body>
+</html>
