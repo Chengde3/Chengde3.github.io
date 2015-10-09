@@ -2,7 +2,8 @@ markdown: rdiscount
 permalink: /:title/
 highlighter: pygments
 name: xy 
-description: xy | 2015, To Be A Better one 
+description: xy | 顽张れ
 author: xy 
+duoshuo: xy
 safe: true
 paginate: 100

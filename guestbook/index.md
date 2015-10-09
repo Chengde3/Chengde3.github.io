@@ -5,7 +5,7 @@ comments: yes
 thread: 616
 ---
 
-![come on](guest.jpg)
+![welcome](guest.jpg)
 
 
-有许多想要踏足的地方，而只要坚持便都可以实现。
+有许多想要踏足的地方，而只要坚持一切都可以成为现实。
