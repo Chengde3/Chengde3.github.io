@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 记仲秋于维扬金陵四日
+title: 仲秋于维扬金陵四日
 date: 2015-10-09
 categories: 纪行
 tags: 游记 江南 
